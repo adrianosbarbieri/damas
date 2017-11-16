@@ -7,6 +7,10 @@ void threat_square(int x, int y);
 void convert_to_queen();
 void convert_input_matrix();
 void start_game();
+bool check_threat_pp(int x, int y);
+bool check_threat_pn(int x, int y);
+bool check_threat_nn(int x, int y);
+bool check_threat_np(int x, int y);
 
 enum PECA
 {
@@ -77,7 +81,7 @@ void clear_input_matrix()
 int scan_matrix()
 {
     digitalWrite(turn_write, HIGH);
-    
+
     last_turn = curr_turn;
     curr_turn = digitalRead(turn_read) == HIGH;
     curr_turn ? Serial.println("A") : Serial.println("B");
@@ -104,7 +108,6 @@ int scan_matrix()
     {
         for(int j = 0; j < 8; j++)
         {
-            // vez do A
             if(curr_turn == true)
             {
                 if(matrix[i][j] != 0)
@@ -143,7 +146,6 @@ int scan_matrix()
                         matrix[i][j] = E;
                 }
             }
-            // vez do B
             else
             {
                 if(matrix[i][j] != 0)
@@ -239,155 +241,120 @@ void convert_to_queen()
     }
 }
 
+bool check_threat_pp(int x, int y)
+{
+    if(x + 2 < 8 && y + 2 < 8)
+    {
+        if(matrix[x + 1][y + 1] == BK && matrix[x + 2][y + 2] == E)
+        {
+            return true;
+            matrix[x + 1][y + 1] = BKT;
+        }
+        if(matrix[x + 1][y + 1] == B && matrix[x + 2][y + 2] == E)
+        {
+            return true;
+            matrix[x + 1][y + 1] = BT;
+        }
+    }
+    return false;
+}
+
+bool check_threat_pn(int x, int y)
+{
+    if(x + 2 < 8 && y - 2 >= 0)
+    {
+        if(matrix[x + 1][y - 1] == BK && matrix[x + 2][y - 2] == E)
+        {
+            matrix[x + 1][y - 1] = BKT;
+        }
+        if(matrix[x + 1][y - 1] == B && matrix[x + 2][y - 2] == E)
+        {
+            matrix[x + 1][y - 1] = BT;
+        }
+    }
+}
+
+bool check_threat_np(int x, int y)
+{
+    if(x - 2 >= 0 && y + 2 < 8)
+    {
+        if(matrix[x - 1][y + 1] == BK && matrix[x - 2][y + 2] == E)
+        {
+            matrix[x - 1][y + 1] = BKT;
+            return true;
+        }
+        if(matrix[x - 1][y + 1] == B && matrix[x - 2][y + 2] == E)
+        {
+            matrix[x - 1][y + 1] = BT;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool check_threat_nn(int x, int y)
+{
+    if(x - 2 >= 0 && y - 2 >= 0)
+    {
+        if(matrix[x - 1][y - 1] == BK && matrix[x - 2][y - 2] == E)
+        {
+            matrix[x - 1][y - 1] = BKT;
+            return true;
+        }
+        if(matrix[x - 1][y - 1] == B && matrix[x - 2][y - 2] == E)
+        {
+            matrix[x - 1][y - 1] = BT;
+            return true;
+        }
+    }
+    return false;
+}
+
 void threat_square(int x, int y)
 {
     if(matrix[x][y] == A && curr_turn == true)
     {
-        if(x + 2 < 8 && y + 2 < 8)
-        {
-            if(matrix[x + 1][y + 1] == BK && matrix[x + 2][y + 2] == E)
-                matrix[x + 1][y + 1] = BKT;
-            if(matrix[x + 1][y + 1] == B && matrix[x + 2][y + 2] == E)
-                matrix[x + 1][y + 1] = BT;
-        }
-        if(x - 2 >= 0 && y + 2 < 8)
-        {
-            if(matrix[x - 1][y + 1] == BK && matrix[x - 2][y + 2] == E)
-                matrix[x - 1][y + 1] = BKT;
-            if(matrix[x - 1][y + 1] == B && matrix[x - 2][y + 2] == E)
-                matrix[x - 1][y + 1] = BT;
-        }
-        if(x + 2 >= 0 && y - 2 < 8)
-        {
-            if(matrix[x + 1][y - 1] == BK && matrix[x + 2][y - 2] == E)
-                matrix[x + 1][y - 1] = BKT;
-            if(matrix[x + 1][y - 1] == B && matrix[x + 2][y - 2] == E)
-                matrix[x + 1][y - 1] = BT;
-        }
-        if(x - 2 >= 0 && y - 2 < 8)
-        {
-            if(matrix[x - 1][y - 1] == BK && matrix[x - 2][y - 2] == E)
-                matrix[x - 1][y - 1] = BKT;
-            if(matrix[x - 1][y - 1] == B && matrix[x - 2][y - 2] == E)
-                matrix[x - 1][y - 1] = BT;
-        }
+        check_threat_pp(x, y);
+        check_threat_pn(x, y);
+        check_threat_np(x, y);
+        check_threat_nn(x, y);
     }
     else if(matrix[x][y] == AK && curr_turn == true)
     {
         for(int i = 0; i < 8; i++)
-        {
-            if(x + 2 + i < 8 && y + 2 + i < 8)
-            {
-                if(matrix[x + 1 + i][y + 1 + i] == BK && matrix[x + 2 + i][y + 2 + i] == E)
-                    matrix[x + 1 + i][y + 1 + i] = BKT;
-                if(matrix[x + 1 + i][y + 1 + i] == B && matrix[x + 2 + i][y + 2 + i] == E)
-                    matrix[x + 1 + i][y + 1 + i] = BT;
-            }
-        }
+            if(check_threat_pp(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x + 2 + i < 8 && y - 2 - i >= 0)
-            {
-                if(matrix[x + 1 + i][y - 1 - i] == BK && matrix[x + 2 + i][y - 2 - i] == E)
-                    matrix[x + 1 + i][y - 1 - i] = BKT;
-                if(matrix[x + 1 + i][y - 1 - i] == B && matrix[x + 2 + i][y - 2 - i] == E)
-                    matrix[x + 1 + i][y - 1 - i] = BT;
-            }
-        }
+            if(check_threat_pn(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x - 2 - i >= 0 && y - 2 - i >= 0)
-            {
-                if(matrix[x - 1 - i][y - 1 - i] == BK && matrix[x - 2 - i][y - 2 - i] == E)
-                    matrix[x - 1 - i][y - 1 - i] = BKT;
-                if(matrix[x - 1 - i][y - 1 - i] == B && matrix[x - 2 - i][y - 2 - i] == E)
-                    matrix[x - 1 - i][y - 1 - i] = BT;
-            }
-        }
+            if(check_threat_nn(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x - 2 - i >= 0 && y + 2 + i < 8)
-            {
-                if(matrix[x - 1 - i][y + 1 + i] == BK && matrix[x - 2 - i][y + 2 + i] == E)
-                    matrix[x - 1 - i][y + 1 + i] = BKT;
-                if(matrix[x - 1 - i][y + 1 + i] == B && matrix[x - 2 - i][y + 2 + i] == E)
-                    matrix[x - 1 - i][y + 1 + i] = BT;
-            }
-        }
+            if(check_threat_pn(x, y) == true)
+                break;
     }
     else if(matrix[x][y] == B && curr_turn == false)
     {
-        if(x + 2 < 8 && y - 2 >= 0)
-        {
-            if(matrix[x + 1][y - 1] == AK && matrix[x + 2][y - 2] == E)
-                matrix[x + 1][y - 1] = AKT;
-            if(matrix[x + 1][y - 1] == A && matrix[x + 2][y - 2] == E)
-                matrix[x + 1][y - 1] = AT;
-        }
-        if(x - 2 >= 0 && y - 2 >= 0)
-        {
-            if(matrix[x - 1][y - 1] == AK && matrix[x - 2][y - 2] == E)
-                matrix[x - 1][y - 1] = AKT;
-            if(matrix[x - 1][y - 1] == A && matrix[x - 2][y - 2] == E)
-                matrix[x - 1][y - 1] = AT;
-        }
-        if(x - 2 >= 0 && y + 2 >= 0)
-        {
-            if(matrix[x - 1][y + 1] == AK && matrix[x - 2][y + 2] == E)
-                matrix[x - 1][y + 1] = AKT;
-            if(matrix[x - 1][y + 1] == A && matrix[x - 2][y + 2] == E)
-                matrix[x - 1][y + 1] = AT;
-        }
-        if(x + 2 >= 0 && y + 2 >= 0)
-        {
-            if(matrix[x + 1][y + 1] == AK && matrix[x + 2][y + 2] == E)
-                matrix[x + 1][y + 1] = AKT;
-            if(matrix[x + 1][y + 1] == A && matrix[x + 2][y + 2] == E)
-                matrix[x + 1][y + 1] = AT;
-        }
+        check_threat_pp(x, y);
+        check_threat_pn(x, y);
+        check_threat_np(x, y);
+        check_threat_nn(x, y);
     }
     else if(matrix[x][y] == AK && curr_turn == true)
     {
         for(int i = 0; i < 8; i++)
-        {
-            if(x + 2 + i < 8 && y + 2 + i < 8)
-            {
-                if(matrix[x + 1 + i][y + 1 + i] == BK && matrix[x + 2 + i][y + 2 + i] == E)
-                    matrix[x + 1 + i][y + 1 + i] = BKT;
-                if(matrix[x + 1 + i][y + 1 + i] == B && matrix[x + 2 + i][y + 2 + i] == E)
-                    matrix[x + 1 + i][y + 1 + i] = BT;
-            }
-        }
+            if(check_threat_pp(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x + 2 + i < 8 && y - 2 - i >= 0)
-            {
-                if(matrix[x + 1 + i][y - 1 - i] == BK && matrix[x + 2 + i][y - 2 - i] == E)
-                    matrix[x + 1 + i][y - 1 - i] = BKT;
-                if(matrix[x + 1 + i][y - 1 - i] == B && matrix[x + 2 + i][y - 2 - i] == E)
-                    matrix[x + 1 + i][y - 1 - i] = BT;
-            }
-        }
+            if(check_threat_pn(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x - 2 - i >= 0 && y - 2 - i >= 0)
-            {
-                if(matrix[x - 1 - i][y - 1 - i] == BK && matrix[x - 2 - i][y - 2 - i] == E)
-                    matrix[x - 1 - i][y - 1 - i] = BKT;
-                if(matrix[x - 1 - i][y - 1 - i] == B && matrix[x - 2 - i][y - 2 - i] == E)
-                    matrix[x - 1 - i][y - 1 - i] = BT;
-            }
-        }
+            if(check_threat_nn(x, y) == true)
+                break;
         for(int i = 0; i < 8; i++)
-        {
-            if(x - 2 - i >= 0 && y + 2 + i < 8)
-            {
-                if(matrix[x - 1 - i][y + 1 + i] == BK && matrix[x - 2 - i][y + 2 + i] == E)
-                    matrix[x - 1 - i][y + 1 + i] = BKT;
-                if(matrix[x - 1 - i][y + 1 + i] == B && matrix[x - 2 - i][y + 2 + i] == E)
-                    matrix[x - 1 - i][y + 1 + i] = BT;
-            }
-        }
+            if(check_threat_pn(x, y) == true)
+                break;
     }
 }
 
