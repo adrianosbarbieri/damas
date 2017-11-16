@@ -20,22 +20,18 @@ enum PECA
     AKT,
     BKT
 };
-int matrix_old[8][8] = {{A, E, A, E, E, E, B, E},
-                        {E, A, E, E, E, B, E, B},
-                        {A, E, A, E, E, E, B, E},
-                        {E, A, E, E, E, B, E, B},
-                        {A, E, A, E, E, E, B, E}, 
-                        {E, A, E, E, E, B, E, B},
-                        {A, E, A, E, E, E, B, E},
-                        {E, A, E, E, E, B, E, B}};
+int matrix_old[8][8] = {{A, E, A, E, E, E, B, E}, {E, A, E, E, E, B, E, B}, {A, E, A, E, E, E, B, E},
+                        {E, A, E, E, E, B, E, B}, {A, E, A, E, E, E, B, E}, {E, A, E, E, E, B, E, B},
+                        {A, E, A, E, E, E, B, E}, {E, A, E, E, E, B, E, B}};
 int matrix[8][8] = {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}};
-int input_matrix[8][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+int input_matrix[8][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
+                          {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
 bool curr_turn; /* true = A, false = B */
 bool last_turn; /* true = A, false = B */
 const int lin[8] = {2, 3, 4, 5, 6, 7, 8, 9};
-const int col[4] = {10, 11, 12, 13}; //12, 13};
+const int col[4] = {10, 11, 12, 13}; // 12, 13};
 const int turn_read = 0;
 const int turn_write = 1;
 
@@ -62,14 +58,6 @@ void setup()
     pinMode(turn_write, OUTPUT);
     pinMode(turn_read, INPUT);
     digitalWrite(turn_write, HIGH);
-    /*
-     * 
-    pinMode(2, OUTPUT);
-    pinMode(3, INPUT);
-    Serial.begin(9600);
-    Serial.println();
-    */
-
 }
 
 void copy_matrix()
@@ -91,14 +79,9 @@ int scan_matrix()
     digitalWrite(turn_write, HIGH);
     
     last_turn = curr_turn;
-    
     curr_turn = digitalRead(turn_read) == HIGH;
     curr_turn ? Serial.println("A") : Serial.println("B");
 
-    if(curr_turn != last_turn){
-        copy_matrix();
-    }
-    
     clear_input_matrix();
     for(int i = 0; i < 8; i++)
     {
@@ -112,43 +95,43 @@ int scan_matrix()
         }
         digitalWrite(lin[i], LOW);
     }
-    
+
     convert_input_matrix();
+    int sumiu = -1;
+    int apareceu_i = -1;
+    int apareceu_j = -1;
     for(int i = 0; i < 8; i++)
     {
         for(int j = 0; j < 8; j++)
         {
-            int apareceu_i = -1;
-            int apareceu_j = -1;
-            int sumiu = -1;
-          //vez do A
+            // vez do A
             if(curr_turn == true)
             {
                 if(matrix[i][j] != 0)
                 {
-                    if(matrix_old[i][j] == A) {
+                    if(matrix_old[i][j] == A)
                         matrix[i][j] = A;
-                    }
-                    else if(matrix_old[i][j] == AK) {
+                    else if(matrix_old[i][j] == AK)
                         matrix[i][j] = AK;
-                    }
-                    else if(matrix_old[i][j] == BK) {
+                    else if(matrix_old[i][j] == BK)
                         matrix[i][j] = BK;
-                    }
                     else if(matrix_old[i][j] == B)
                         matrix[i][j] = B;
-                    else if(matrix_old[i][j] == E) {
+                    else if(matrix_old[i][j] == E)
+                    {
                         apareceu_i = i;
                         apareceu_j = j;
-                    }                        
+                    }
                 }
                 else
                 {
-                    if(matrix_old[i][j] == A) {
+                    if(matrix_old[i][j] == A)
+                    {
                         sumiu = A;
                         matrix[i][j] = E;
                     }
-                    else if(matrix_old[i][j] == AK) {
+                    else if(matrix_old[i][j] == AK)
+                    {
                         sumiu = AK;
                         matrix[i][j] = E;
                     }
@@ -160,7 +143,7 @@ int scan_matrix()
                         matrix[i][j] = E;
                 }
             }
-            //vez do B
+            // vez do B
             else
             {
                 if(matrix[i][j] != 0)
@@ -173,18 +156,21 @@ int scan_matrix()
                         matrix[i][j] = B;
                     else if(matrix_old[i][j] == BK)
                         matrix[i][j] = BK;
-                    else if(matrix_old[i][j] == E) {
+                    else if(matrix_old[i][j] == E)
+                    {
                         apareceu_i = i;
                         apareceu_j = j;
                     }
                 }
                 else
                 {
-                    if(matrix_old[i][j] == B) {
+                    if(matrix_old[i][j] == B)
+                    {
                         sumiu = B;
                         matrix[i][j] = E;
                     }
-                    if(matrix_old[i][j] == BK) {
+                    if(matrix_old[i][j] == BK)
+                    {
                         sumiu = BK;
                         matrix[i][j] = E;
                     }
@@ -199,7 +185,10 @@ int scan_matrix()
         }
     }
     if(sumiu != -1)
-        matrix[apareceu_i][apareceu_j] = sumiu;    
+        matrix[apareceu_i][apareceu_j] = sumiu;
+    convert_to_queen();
+    if(curr_turn != last_turn)
+        copy_matrix();
 }
 
 void start_game()
@@ -232,10 +221,10 @@ void convert_input_matrix()
         matrix[2][i] = input_matrix[i][1];
         matrix[4][i] = input_matrix[i][2];
         matrix[6][i] = input_matrix[i][3];
-        matrix[1][i+1] = input_matrix[i + 1][0];
-        matrix[3][i+1] = input_matrix[i + 1][1];
-        matrix[5][i+1] = input_matrix[i + 1][2];
-        matrix[7][i+1] = input_matrix[i + 1][3];
+        matrix[1][i + 1] = input_matrix[i + 1][0];
+        matrix[3][i + 1] = input_matrix[i + 1][1];
+        matrix[5][i + 1] = input_matrix[i + 1][2];
+        matrix[7][i + 1] = input_matrix[i + 1][3];
     }
 }
 
@@ -254,64 +243,151 @@ void threat_square(int x, int y)
 {
     if(matrix[x][y] == A && curr_turn == true)
     {
-      if(x + 2 < 8 && y + 2 < 8) {
+        if(x + 2 < 8 && y + 2 < 8)
+        {
             if(matrix[x + 1][y + 1] == BK && matrix[x + 2][y + 2] == E)
                 matrix[x + 1][y + 1] = BKT;
             if(matrix[x + 1][y + 1] == B && matrix[x + 2][y + 2] == E)
                 matrix[x + 1][y + 1] = BT;
-      }
-      if(x - 2 >= 0 && y + 2 < 8) {
+        }
+        if(x - 2 >= 0 && y + 2 < 8)
+        {
             if(matrix[x - 1][y + 1] == BK && matrix[x - 2][y + 2] == E)
                 matrix[x - 1][y + 1] = BKT;
             if(matrix[x - 1][y + 1] == B && matrix[x - 2][y + 2] == E)
                 matrix[x - 1][y + 1] = BT;
-      }
-      if(x + 2 >= 0 && y - 2 < 8) {
+        }
+        if(x + 2 >= 0 && y - 2 < 8)
+        {
             if(matrix[x + 1][y - 1] == BK && matrix[x + 2][y - 2] == E)
                 matrix[x + 1][y - 1] = BKT;
             if(matrix[x + 1][y - 1] == B && matrix[x + 2][y - 2] == E)
                 matrix[x + 1][y - 1] = BT;
-      }
-      if(x - 2 >= 0 && y - 2 < 8) {
+        }
+        if(x - 2 >= 0 && y - 2 < 8)
+        {
             if(matrix[x - 1][y - 1] == BK && matrix[x - 2][y - 2] == E)
                 matrix[x - 1][y - 1] = BKT;
             if(matrix[x - 1][y - 1] == B && matrix[x - 2][y - 2] == E)
                 matrix[x - 1][y - 1] = BT;
+        }
     }
     else if(matrix[x][y] == AK && curr_turn == true)
     {
-      
+        for(int i = 0; i < 8; i++)
+        {
+            if(x + 2 + i < 8 && y + 2 + i < 8)
+            {
+                if(matrix[x + 1 + i][y + 1 + i] == BK && matrix[x + 2 + i][y + 2 + i] == E)
+                    matrix[x + 1 + i][y + 1 + i] = BKT;
+                if(matrix[x + 1 + i][y + 1 + i] == B && matrix[x + 2 + i][y + 2 + i] == E)
+                    matrix[x + 1 + i][y + 1 + i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x + 2 + i < 8 && y - 2 - i >= 0)
+            {
+                if(matrix[x + 1 + i][y - 1 - i] == BK && matrix[x + 2 + i][y - 2 - i] == E)
+                    matrix[x + 1 + i][y - 1 - i] = BKT;
+                if(matrix[x + 1 + i][y - 1 - i] == B && matrix[x + 2 + i][y - 2 - i] == E)
+                    matrix[x + 1 + i][y - 1 - i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x - 2 - i >= 0 && y - 2 - i >= 0)
+            {
+                if(matrix[x - 1 - i][y - 1 - i] == BK && matrix[x - 2 - i][y - 2 - i] == E)
+                    matrix[x - 1 - i][y - 1 - i] = BKT;
+                if(matrix[x - 1 - i][y - 1 - i] == B && matrix[x - 2 - i][y - 2 - i] == E)
+                    matrix[x - 1 - i][y - 1 - i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x - 2 - i >= 0 && y + 2 + i < 8)
+            {
+                if(matrix[x - 1 - i][y + 1 + i] == BK && matrix[x - 2 - i][y + 2 + i] == E)
+                    matrix[x - 1 - i][y + 1 + i] = BKT;
+                if(matrix[x - 1 - i][y + 1 + i] == B && matrix[x - 2 - i][y + 2 + i] == E)
+                    matrix[x - 1 - i][y + 1 + i] = BT;
+            }
+        }
     }
     else if(matrix[x][y] == B && curr_turn == false)
     {
-      if(x + 2 < 8 && y - 2 >= 0) {
-          if(matrix[x + 1][y - 1] == AK && matrix[x + 2][y - 2] == E)
-              matrix[x + 1][y - 1] = AKT;
-          if(matrix[x + 1][y - 1] == A && matrix[x + 2][y - 2] == E)
-              matrix[x + 1][y - 1] = AT;
-      }
-      if(x - 2 >= 0 && y - 2 >= 0) {
-          if(matrix[x - 1][y - 1] == AK && matrix[x - 2][y - 2] == E)
-              matrix[x - 1][y - 1] = AKT;
-          if(matrix[x - 1][y - 1] == A && matrix[x - 2][y - 2] == E)
-              matrix[x - 1][y - 1] = AT;
-      }
-      if(x - 2 >= 0 && y + 2 >= 0) {
-          if(matrix[x - 1][y + 1] == AK && matrix[x - 2][y + 2] == E)
-              matrix[x - 1][y + 1] = AKT;
-          if(matrix[x - 1][y + 1] == A && matrix[x - 2][y + 2] == E)
-              matrix[x - 1][y + 1] = AT;
-      }
-      if(x + 2 >= 0 && y + 2 >= 0) {
-          if(matrix[x + 1][y + 1] == AK && matrix[x + 2][y + 2] == E)
-              matrix[x + 1][y + 1] = AKT;
-          if(matrix[x + 1][y + 1] == A && matrix[x + 2][y + 2] == E)
-              matrix[x + 1][y + 1] = AT;
-      }
+        if(x + 2 < 8 && y - 2 >= 0)
+        {
+            if(matrix[x + 1][y - 1] == AK && matrix[x + 2][y - 2] == E)
+                matrix[x + 1][y - 1] = AKT;
+            if(matrix[x + 1][y - 1] == A && matrix[x + 2][y - 2] == E)
+                matrix[x + 1][y - 1] = AT;
+        }
+        if(x - 2 >= 0 && y - 2 >= 0)
+        {
+            if(matrix[x - 1][y - 1] == AK && matrix[x - 2][y - 2] == E)
+                matrix[x - 1][y - 1] = AKT;
+            if(matrix[x - 1][y - 1] == A && matrix[x - 2][y - 2] == E)
+                matrix[x - 1][y - 1] = AT;
+        }
+        if(x - 2 >= 0 && y + 2 >= 0)
+        {
+            if(matrix[x - 1][y + 1] == AK && matrix[x - 2][y + 2] == E)
+                matrix[x - 1][y + 1] = AKT;
+            if(matrix[x - 1][y + 1] == A && matrix[x - 2][y + 2] == E)
+                matrix[x - 1][y + 1] = AT;
+        }
+        if(x + 2 >= 0 && y + 2 >= 0)
+        {
+            if(matrix[x + 1][y + 1] == AK && matrix[x + 2][y + 2] == E)
+                matrix[x + 1][y + 1] = AKT;
+            if(matrix[x + 1][y + 1] == A && matrix[x + 2][y + 2] == E)
+                matrix[x + 1][y + 1] = AT;
+        }
     }
     else if(matrix[x][y] == AK && curr_turn == true)
     {
-      
+        for(int i = 0; i < 8; i++)
+        {
+            if(x + 2 + i < 8 && y + 2 + i < 8)
+            {
+                if(matrix[x + 1 + i][y + 1 + i] == BK && matrix[x + 2 + i][y + 2 + i] == E)
+                    matrix[x + 1 + i][y + 1 + i] = BKT;
+                if(matrix[x + 1 + i][y + 1 + i] == B && matrix[x + 2 + i][y + 2 + i] == E)
+                    matrix[x + 1 + i][y + 1 + i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x + 2 + i < 8 && y - 2 - i >= 0)
+            {
+                if(matrix[x + 1 + i][y - 1 - i] == BK && matrix[x + 2 + i][y - 2 - i] == E)
+                    matrix[x + 1 + i][y - 1 - i] = BKT;
+                if(matrix[x + 1 + i][y - 1 - i] == B && matrix[x + 2 + i][y - 2 - i] == E)
+                    matrix[x + 1 + i][y - 1 - i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x - 2 - i >= 0 && y - 2 - i >= 0)
+            {
+                if(matrix[x - 1 - i][y - 1 - i] == BK && matrix[x - 2 - i][y - 2 - i] == E)
+                    matrix[x - 1 - i][y - 1 - i] = BKT;
+                if(matrix[x - 1 - i][y - 1 - i] == B && matrix[x - 2 - i][y - 2 - i] == E)
+                    matrix[x - 1 - i][y - 1 - i] = BT;
+            }
+        }
+        for(int i = 0; i < 8; i++)
+        {
+            if(x - 2 - i >= 0 && y + 2 + i < 8)
+            {
+                if(matrix[x - 1 - i][y + 1 + i] == BK && matrix[x - 2 - i][y + 2 + i] == E)
+                    matrix[x - 1 - i][y + 1 + i] = BKT;
+                if(matrix[x - 1 - i][y + 1 + i] == B && matrix[x - 2 - i][y + 2 + i] == E)
+                    matrix[x - 1 - i][y + 1 + i] = BT;
+            }
+        }
     }
 }
 
@@ -346,29 +422,14 @@ void print_input_matrix()
 
 void loop()
 {
-  
-      for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 8; i++)
         digitalWrite(lin[i], LOW);
     for(int i = 0; i < 4; i++)
         digitalWrite(col[i], LOW);
-
-    //init_matrix();
     scan_matrix();
-    
     for(int i = 0; i < 8; i++)
         for(int j = 0; j < 8; j++)
             threat_square(i, j);
     print_matrix();
     delay(500);
-  /*  
-    digitalWrite(3, LOW);
-    digitalWrite(2, HIGH);
-    if(digitalRead(3) == HIGH) {
-      Serial.println("OK!");
-    } else {
-      Serial.println("NAO OK!");
-    }
-    delay(50);
-    digitalWrite(2, LOW);
-    */
 }
